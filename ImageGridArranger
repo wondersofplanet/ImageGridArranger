@@ -1,0 +1,62 @@
+Sub ArrangeImagesInThreeColumns()
+    Dim img As Picture ' Declare a variable to represent each image
+    Dim gap As Integer ' Set the gap between images
+    Dim cellWidth As Double ' Width of each cell in the grid
+    Dim cellHeight As Double ' Height of each cell in the grid
+    Dim maxImageWidth As Double ' Maximum width among all images
+    Dim maxImageHeight As Double ' Maximum height among all images
+    Dim numRows As Integer ' Number of rows in the grid
+    Dim numCols As Integer ' Number of columns in the grid
+    Dim rowIdx As Integer ' Row index for positioning images
+    Dim colIdx As Integer ' Column index for positioning images
+    Dim currentLeft As Double ' Current left position for each image
+    Dim currentTop As Double ' Current top position for each image
+    Dim i As Integer ' Loop counter for iterating through images
+    
+    ' Set the gap between images (how much space is left between each image)
+    gap = 30 ' You can change this number to make the gap bigger or smaller
+    
+    ' Find the maximum width and height among all images on the worksheet
+    ' This loop goes through each image and finds the one with the biggest width and height
+    maxImageWidth = 0
+    maxImageHeight = 0
+    For Each img In ActiveSheet.Pictures
+        If img.Width > maxImageWidth Then
+            maxImageWidth = img.Width
+        End If
+        If img.Height > maxImageHeight Then
+            maxImageHeight = img.Height
+        End If
+    Next img
+    
+    ' Calculate the number of columns and rows in the grid based on available space
+    numCols = 3 ' We're dividing the worksheet into 3 columns
+    numRows = WorksheetFunction.Ceiling(ActiveSheet.Pictures.Count / numCols, 1) ' Calculate the number of rows
+    
+    ' Calculate the width and height of each cell in the grid
+    ' Each cell should be big enough to fit the biggest image plus the gap
+    cellWidth = maxImageWidth + gap
+    cellHeight = maxImageHeight + gap
+    
+    ' Reset indices for positioning images
+    rowIdx = 1
+    colIdx = 1
+    
+    ' Loop through each picture to arrange them in a grid
+    For Each img In ActiveSheet.Pictures
+        ' Calculate the position for the current image based on the grid
+        currentLeft = (colIdx - 1) * cellWidth
+        currentTop = (rowIdx - 1) * cellHeight
+        
+        ' Set the position of the picture
+        img.Left = currentLeft
+        img.Top = currentTop
+        
+        ' Move to the next cell in the grid
+        rowIdx = rowIdx + 1
+        If rowIdx > numRows Then
+            rowIdx = 1
+            colIdx = colIdx + 1
+        End If
+    Next img
+End Sub
